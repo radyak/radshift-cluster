@@ -1,0 +1,5 @@
+node_modules
+.env
+.env.conf
+.env.key
+.tmp

@@ -1,0 +1,113 @@
+version: '3'
+
+services:
+
+  gateway:
+    image: traefik:1.7
+    container_name: gateway
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${ROOT_DIR}/etc/traefik:/etc/traefik
+    environment:
+      - "TZ=Europe/Berlin"
+      - "TRAEFIK_PROVIDERS_FILE_FILENAME=/etc/traefik/custom.toml"
+      - "GODADDY_API_KEY=${DYN_DNS_PROVIDER_USERNAME}"
+      - "GODADDY_API_SECRET=${DYN_DNS_PROVIDER_PASSWORD}"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+      - www
+
+  core:
+    container_name: core
+    image: ${REPO}/radshift-core:${TAG}
+    depends_on:
+      - mongodb
+    restart: on-failure
+    ports:
+      - 3000:3000
+    volumes:
+      - "${ROOT_DIR}/etc/core:/usr/src/conf"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - "PORT=3000"
+      - "CONF_DIR=/usr/src/conf"
+      - "MONGO_HOST=${MONGO_HOST}"
+      - "MONGO_PORT=${MONGO_PORT}"
+      - "MONGO_DATABASE=${MONGO_DATABASE}"
+      - "ACTIVE_CONTEXT_PROFILES=${ACTIVE_CONTEXT_PROFILES}"
+      - "HOST_DOMAIN=${DOMAIN}"
+      - "DYN_DNS_PROVIDER=${DYN_DNS_PROVIDER}"
+      - "DYN_DNS_PROVIDER_USERNAME=${DYN_DNS_PROVIDER_USERNAME}"
+      - "DYN_DNS_PROVIDER_PASSWORD=${DYN_DNS_PROVIDER_PASSWORD}"
+      - "DYN_DNS_UPDATE_INTERVAL_MINUTES=${DYN_DNS_UPDATE_INTERVAL_MINUTES}"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    labels:
+      - "traefik.backend=core"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:core.${DOMAIN}"
+      - "traefik.port=3000"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+
+  testapp:
+    container_name: testapp
+    image: ${REPO}/radshift-testapp:${TAG}
+    restart: on-failure
+    environment:
+      - PORT=3210
+    ports:
+      - 3210:3210
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    labels:
+      - "traefik.backend=testapp"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:testapp.${DOMAIN}"
+      - "traefik.port=3210"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
+      - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
+      - "traefik.frontend.auth.forward.trustForwardHeader=true"
+    
+  mongodb:
+    container_name: mongodb
+    image: ${MONGODB_IMAGE}
+    restart: on-failure
+    ports:
+      - 27017:27017
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    volumes:
+      - "${ROOT_DIR}/var/mongodb:/data/db"
+
+  radshift-stream-downloader:
+    container_name: radshift-stream-downloader
+    image: ${REPO}/radshift-stream-downloader:${TAG}
+    restart: on-failure
+    environment:
+      - PORT=3009
+    volumes:
+      - "/home/fvo/tmp/test-mounts:/usr/src/app/output"
+    ports:
+      - 3009:3009
+    networks:
+      - www
+      - ${INTERNAL_NETWORK:-internal}
+
+
+networks:
+
+  www:
+    driver: bridge
+
+  internal:
+    driver: bridge
+    internal: true
+
+  dev:
+    driver: bridge

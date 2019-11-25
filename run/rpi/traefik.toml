@@ -1,0 +1,50 @@
+logLevel = "INFO"
+
+defaultEntryPoints = ["http", "https"]
+
+[web]
+  address = ":8080"
+
+[docker]
+  endpoint = "unix:///var/run/docker.sock"
+  domain = "rdshft.de"
+  watch = true
+  exposedbydefault = false
+
+ # Force HTTPS
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+ # Let's encrypt configuration
+ [acme]
+   email="florian.vogel84@gmx.net"
+   storage="/etc/traefik/acme/acme.json"
+   entryPoint="https"
+   acmeLogging=true
+   OnHostRule=true
+   [acme.dnsChallenge]
+     provider = "godaddy"
+   [acme.httpChallenge]
+     entryPoint = "http"
+
+[[acme.domains]]
+  main = "*.rdshft.de"
+  #sans = ["local3.com", "test1.test1.local3.com"]
+
+################################################################
+# File configuration backend
+################################################################
+# Enable file configuration backend
+# Optional
+# Mounted via TRAEFIK_PROVIDERS_FILE_FILENAME env var
+[file]
+  filename = "/etc/traefik/custom.toml"
+
+# Enable watch file changes
+  watch = true

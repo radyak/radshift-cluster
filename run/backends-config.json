@@ -1,0 +1,51 @@
+{
+    "testapp": {
+        "label": "Test-App",
+        "description": "Some sample app",
+        "host": "testapp",
+        "port": 3210,
+        "image": "rpi-workstation:5000/radshift-testapp:latest",
+        "entry": "",
+        "security": {
+            "rules": [
+                {
+                    "resourceMatcher": "\/protected.*",
+                    "authenticated": true
+                },
+                {
+                    "resourceMatcher": ".*admin.*",
+                    "permissions": [
+                        "admin"
+                    ],
+                    "mappings": {
+                        "name": "X-User",
+                        "scope": "X-Roles"
+                    }
+                }
+            ],
+
+            "authenticated": true,
+            "mappings": {
+                "name": "X-User",
+                "scope": "X-Roles"
+            }
+        }
+    },
+
+    "radshift-stream-downloader": {
+        "label": "StreamNoMoreFam",
+        "description": "Download video & audio from streams",
+        "host": "radshift-stream-downloader",
+        "name": "radshift-stream-downloader",
+        "port": 3009,
+        "image": "rpi-workstation:5000/radshift-stream-downloader:latest",
+        "entry": "",
+        "security": {
+            "authenticated": true,
+            "mappings": {
+                "name": "X-User",
+                "scope": "X-Roles"
+            }
+        }
+    }
+}
