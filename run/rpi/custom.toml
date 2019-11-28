@@ -9,4 +9,4 @@ loglevel = "ERROR"
     [frontends.domain]
         backend = "nasweb"
     [frontends.domain.routes.domain]
-        rule = "Host:birdwell.traefik.test"
+        rule = "Host:birdwell.rdshft.de"

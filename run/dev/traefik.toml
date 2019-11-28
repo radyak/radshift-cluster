@@ -24,7 +24,7 @@ defaultEntryPoints = ["http", "https"]
  # Let's encrypt configuration
 #  [acme]
 #    email="youremail.address@example.com"
-#    storage="/etc/traefik/acme/acme.json"
+#    storage="/etc/gateway/acme/acme.json"
 #    entryPoint="https"
 #    acmeLogging=true
 #    OnHostRule=true
@@ -38,7 +38,7 @@ defaultEntryPoints = ["http", "https"]
 # Optional
 # Mounted via TRAEFIK_PROVIDERS_FILE_FILENAME env var
 [file]
-  filename = "/etc/traefik/custom.toml"
+  filename = "/etc/gateway/custom.toml"
 
 # Enable watch file changes
   watch = true

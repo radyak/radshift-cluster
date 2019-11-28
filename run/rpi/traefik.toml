@@ -15,26 +15,26 @@ defaultEntryPoints = ["http", "https"]
 [entryPoints]
   [entryPoints.http]
   address = ":80"
-    [entryPoints.http.redirect]
-    entryPoint = "https"
+    # [entryPoints.http.redirect]
+    # entryPoint = "https"
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
 
  # Let's encrypt configuration
- [acme]
-   email="florian.vogel84@gmx.net"
-   storage="/etc/traefik/acme/acme.json"
-   entryPoint="https"
-   acmeLogging=true
-   OnHostRule=true
-   [acme.dnsChallenge]
-     provider = "godaddy"
-   [acme.httpChallenge]
-     entryPoint = "http"
+#  [acme]
+#    email="florian.vogel84@gmx.net"
+#    storage="/etc/gateway/acme/acme.json"
+#    entryPoint="https"
+#    acmeLogging=true
+#    OnHostRule=true
+#    [acme.dnsChallenge]
+#      provider = "godaddy"
+#    [acme.httpChallenge]
+#      entryPoint = "http"
 
-[[acme.domains]]
-  main = "*.rdshft.de"
+# [[acme.domains]]
+#   main = "*.rdshft.de"
   #sans = ["local3.com", "test1.test1.local3.com"]
 
 ################################################################
@@ -44,7 +44,7 @@ defaultEntryPoints = ["http", "https"]
 # Optional
 # Mounted via TRAEFIK_PROVIDERS_FILE_FILENAME env var
 [file]
-  filename = "/etc/traefik/custom.toml"
+  filename = "/etc/gateway/custom.toml"
 
 # Enable watch file changes
   watch = true
