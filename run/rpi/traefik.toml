@@ -44,7 +44,7 @@ defaultEntryPoints = ["http", "https"]
 # Optional
 # Mounted via TRAEFIK_PROVIDERS_FILE_FILENAME env var
 [file]
-  filename = "/etc/gateway/custom.toml"
+  filename = "/etc/traefik/custom.toml"
 
 # Enable watch file changes
   watch = true
