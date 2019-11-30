@@ -50,10 +50,11 @@ services:
       - ${INTERNAL_NETWORK:-internal}
     labels:
       - "traefik.backend=core"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:core.${DOMAIN}"
+      - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=3000"
-      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
 
   testapp:
     container_name: testapp
@@ -67,13 +68,14 @@ services:
       - ${INTERNAL_NETWORK:-internal}
     labels:
       - "traefik.backend=testapp"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:testapp.${DOMAIN}"
-      - "traefik.port=3210"
-      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.frontend.entryPoints=http,https"
       - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
       - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.port=3210"
     
   mongodb:
     container_name: mongodb
@@ -86,8 +88,8 @@ services:
     volumes:
       - "${ROOT_DIR}/var/mongodb:/data/db"
 
-  radshift-stream-downloader:
-    container_name: radshift-stream-downloader
+  streamnomorefam:
+    container_name: streamnomorefam
     image: ${REPO}/radshift-stream-downloader:${TAG}
     restart: on-failure
     environment:
@@ -100,14 +102,15 @@ services:
       - www
       - ${INTERNAL_NETWORK:-internal}
     labels:
-      - "traefik.backend=radshift-stream-downloader"
+      - "traefik.backend=streamnomorefam"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:streamnomorefam.${DOMAIN}"
-      - "traefik.port=3009"
-      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.frontend.entryPoints=http,https"
       - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
       - "traefik.frontend.auth.forward.authResponseHeaders=X-User"
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
+      - "traefik.port=3009"
 
 
 networks:
