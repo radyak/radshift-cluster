@@ -52,6 +52,9 @@ build.rpi: build.prepare
 
 ## deploy
 
+delpoy.clean: 
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'rm -rf /var/rs-root/home && rm -rf /var/rs-root/etc'
+
 deploy.rpi: build.rpi
 	scp -P $(PORT) .tmp/package.tar $(SSH_USER)@$(HOST):.
-	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'rm -rf /var/rs-root/home && rm -rf /var/rs-root/etc && tar -pxvf package.tar -C /var/rs-root/'
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'tar -pxvf package.tar -C /var/rs-root/'
