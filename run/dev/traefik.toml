@@ -21,16 +21,6 @@ defaultEntryPoints = ["http", "https"]
   address = ":443"
     [entryPoints.https.tls]
 
- # Let's encrypt configuration
-#  [acme]
-#    email="youremail.address@example.com"
-#    storage="/etc/gateway/acme/acme.json"
-#    entryPoint="https"
-#    acmeLogging=true
-#    OnHostRule=true
-#    [acme.httpChallenge]
-#      entryPoint = "http"
-
 ################################################################
 # File configuration backend
 ################################################################

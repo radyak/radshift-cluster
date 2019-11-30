@@ -11,31 +11,30 @@ defaultEntryPoints = ["http", "https"]
   watch = true
   exposedbydefault = false
 
- # Force HTTPS
+# Force HTTPS
 [entryPoints]
   [entryPoints.http]
   address = ":80"
-    # [entryPoints.http.redirect]
-    # entryPoint = "https"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
 
- # Let's encrypt configuration
-#  [acme]
-#    email="florian.vogel84@gmx.net"
-#    storage="/etc/gateway/acme/acme.json"
-#    entryPoint="https"
-#    acmeLogging=true
-#    OnHostRule=true
-#    [acme.dnsChallenge]
-#      provider = "godaddy"
-#    [acme.httpChallenge]
-#      entryPoint = "http"
+# Let's encrypt configuration
+[acme]
+  email="florian.vogel84@gmx.net"
+  storage="/etc/traefik/acme.json"
+  entryPoint="https"
+  acmeLogging=true
+  OnHostRule=true
+  [acme.dnsChallenge]
+    provider = "godaddy"
+  [acme.httpChallenge]
+    entryPoint = "http"
 
-# [[acme.domains]]
-#   main = "*.rdshft.de"
-  #sans = ["local3.com", "test1.test1.local3.com"]
+[[acme.domains]]
+  main = "*.rdshft.de"
 
 ################################################################
 # File configuration backend
