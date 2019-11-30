@@ -32,11 +32,11 @@
         }
     },
 
-    "radshift-stream-downloader": {
+    "streamnomorefam": {
         "label": "StreamNoMoreFam",
         "description": "Download video & audio from streams",
-        "host": "radshift-stream-downloader",
-        "name": "radshift-stream-downloader",
+        "host": "streamnomorefam",
+        "name": "streamnomorefam",
         "port": 3009,
         "image": "rpi-workstation:5000/radshift-stream-downloader:latest",
         "entry": "",
