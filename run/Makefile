@@ -9,13 +9,13 @@ default:
 
 ## run (dev)
 
-run.cluster: build.dev stop.cluster
+run.cluster: stop.cluster build.dev
 	docker-compose up
 
-run.cluster.minimal: build.dev stop.cluster
-	docker-compose up -d gateway core mongodb
+run.cluster.minimal: stop.cluster build.dev
+	docker-compose up -d gateway core
 
-run.cluster.rebuild: build.dev stop.cluster
+run.cluster.rebuild: stop.cluster build.dev
 	docker-compose up -d --build
 
 stop.cluster:
@@ -53,7 +53,7 @@ build.rpi: build.prepare
 ## deploy
 
 delpoy.clean: 
-	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'rm -rf /var/rs-root/home && rm -rf /var/rs-root/etc'
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'rm -rf /var/rs-root/etc'
 
 deploy.rpi: build.rpi
 	scp -P $(PORT) .tmp/package.tar $(SSH_USER)@$(HOST):.

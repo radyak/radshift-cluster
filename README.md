@@ -29,7 +29,7 @@ The following subdirectories are specified relative to the base directory for th
 | Dir | Explanation |
 |--|--|
 | **`/var`**: | |
-| `/var/core` | App data of the core components (e.g. Mongo data file) |
+| `/var/core` | App data of the core components (e.g. lowdb data file) |
 | `/var/<backend name>` | App data of the corresponding backend |
 
 

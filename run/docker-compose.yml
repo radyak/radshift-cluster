@@ -25,20 +25,18 @@ services:
   core:
     container_name: core
     image: ${REPO}/radshift-core:${TAG}
-    depends_on:
-      - mongodb
     restart: on-failure
     ports:
       - 3000:3000
     volumes:
       - "${ROOT_DIR}/etc/core:/usr/src/conf"
+      - "${ROOT_DIR}/var/core:/var/core"
+      - "${ROOT_DIR}/var/shared:/var/shared"
+      - "${ROOT_DIR}/home:/home"
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - "PORT=3000"
       - "CONF_DIR=/usr/src/conf"
-      - "MONGO_HOST=${MONGO_HOST}"
-      - "MONGO_PORT=${MONGO_PORT}"
-      - "MONGO_DATABASE=${MONGO_DATABASE}"
       - "ACTIVE_CONTEXT_PROFILES=${ACTIVE_CONTEXT_PROFILES}"
       - "HOST_DOMAIN=${DOMAIN}"
       - "DYN_DNS_PROVIDER=${DYN_DNS_PROVIDER}"
@@ -77,17 +75,6 @@ services:
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
       - "traefik.port=3210"
     
-  mongodb:
-    container_name: mongodb
-    image: ${MONGODB_IMAGE}
-    restart: on-failure
-    ports:
-      - 27017:27017
-    networks:
-      - ${INTERNAL_NETWORK:-internal}
-    volumes:
-      - "${ROOT_DIR}/var/mongodb:/data/db"
-
   streamnomorefam:
     container_name: streamnomorefam
     image: ${REPO}/radshift-stream-downloader:${TAG}
