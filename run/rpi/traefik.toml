@@ -11,6 +11,8 @@ defaultEntryPoints = ["http", "https"]
   watch = true
   exposedbydefault = false
 
+[accessLog]
+
 # Force HTTPS
 [entryPoints]
   [entryPoints.http]
