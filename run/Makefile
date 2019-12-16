@@ -26,6 +26,7 @@ stop.cluster:
 # TODO: parameterize the build dir (e.g. DIR=rpi)
 
 build.prepare:
+	git pull
 	sudo rm -rf .tmp
 	mkdir .tmp
 	mkdir -p .tmp/etc/gateway
