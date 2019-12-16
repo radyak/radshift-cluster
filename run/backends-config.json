@@ -41,7 +41,12 @@
         "image": "rpi-workstation:5000/radshift-stream-downloader:latest",
         "entry": "",
         "security": {
-            "authenticated": true,
+            "rules": [
+                {
+                    "resourceMatcher": "\/api\/",
+                    "authenticated": true
+                }
+            ],
             "mappings": {
                 "name": "X-User",
                 "scope": "X-Roles"
