@@ -1,12 +1,20 @@
 loglevel = "ERROR"
 
 [backends]
+[backends.nasadmin]
+    [backends.nasadmin.servers.nasadmin]
+        url = "http://birdwell:5000"
 [backends.nasweb]
     [backends.nasweb.servers.nasweb]
-        url = "http://birdwell:5000"
+        url = "http://birdwell:80"
 
 [frontends]
-    [frontends.domain]
-        backend = "nasweb"
-    [frontends.domain.routes.domain]
+    [frontends.nasadmin]
+        backend = "nasadmin"
+    [frontends.nasadmin.routes.domain]
         rule = "Host:birdwell.rdshft.de"
+
+    [frontends.nasweb]
+        backend = "nasweb"
+    [frontends.nasweb.routes.domain]
+        rule = "Host:birdwell-web.rdshft.de"
