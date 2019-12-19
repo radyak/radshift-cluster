@@ -99,6 +99,44 @@ services:
       - "traefik.frontend.auth.forward.authResponseHeaders=X-User"
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
       - "traefik.port=3009"
+      
+  nextcloud:
+    container_name: nextcloud
+    image: nextcloud:17
+    restart: on-failure
+    depends_on:
+      - nextcloud-db
+    environment:
+      - POSTGRES_USER=${NEXTCLOUD_POSTGRES_DB_USER}
+      - POSTGRES_PASSWORD=${NEXTCLOUD_POSTGRES_DB_PASSWORD}
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_HOST=nextcloud-db
+    volumes:
+      - "${ROOT_DIR}/var/nextcloud:/var/www/html"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+      - www
+    labels:
+      - "traefik.backend=nextcloud"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:nextcloud.${DOMAIN}"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.port=80"
+  
+  nextcloud-db:
+    container_name: nextcloud-db
+    image: postgres:12-alpine
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=${NEXTCLOUD_POSTGRES_DB_USER}
+      - POSTGRES_PASSWORD=${NEXTCLOUD_POSTGRES_DB_PASSWORD}
+      - XXX_POSTGRES_PASSWORD_FILE=/run/secrets/postgres-passwd
+      - POSTGRES_DB=nextcloud
+    volumes:
+      - "${ROOT_DIR}/var/nextcloud-db:/var/lib/postgresql/data"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
 
 
 networks:
