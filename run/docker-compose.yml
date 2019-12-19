@@ -55,26 +55,26 @@ services:
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=3000"
 
-  testapp:
-    container_name: testapp
-    image: ${REPO}/radshift-testapp:${TAG}
-    restart: on-failure
-    environment:
-      - PORT=3210
-    ports:
-      - 3210:3210
-    networks:
-      - ${INTERNAL_NETWORK:-internal}
-    labels:
-      - "traefik.backend=testapp"
-      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:testapp.${DOMAIN}"
-      - "traefik.frontend.entryPoints=http,https"
-      - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
-      - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
-      - "traefik.frontend.auth.forward.trustForwardHeader=true"
-      - "traefik.port=3210"
+  # testapp:
+  #   container_name: testapp
+  #   image: ${REPO}/radshift-testapp:${TAG}
+  #   restart: on-failure
+  #   environment:
+  #     - PORT=3210
+  #   ports:
+  #     - 3210:3210
+  #   networks:
+  #     - ${INTERNAL_NETWORK:-internal}
+  #   labels:
+  #     - "traefik.backend=testapp"
+  #     - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+  #     - "traefik.enable=true"
+  #     - "traefik.frontend.rule=Host:testapp.${DOMAIN}"
+  #     - "traefik.frontend.entryPoints=http,https"
+  #     - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
+  #     - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
+  #     - "traefik.frontend.auth.forward.trustForwardHeader=true"
+  #     - "traefik.port=3210"
     
   streamnomorefam:
     container_name: streamnomorefam
