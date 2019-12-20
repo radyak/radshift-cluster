@@ -138,6 +138,22 @@ services:
     networks:
       - ${INTERNAL_NETWORK:-internal}
 
+  bitwarden:
+    container_name: bitwarden
+    image: bitwardenrs/server:raspberry
+    restart: on-failure
+    volumes:
+      - "${ROOT_DIR}/var/bitwarden:/data"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    labels:
+      - "traefik.backend=bitwarden"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:bitwarden.${DOMAIN}"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.port=80"
+
 
 networks:
 
