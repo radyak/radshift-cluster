@@ -25,7 +25,7 @@ services:
   core:
     container_name: core
     image: ${REPO}/radshift-core:${TAG}
-    restart: on-failure
+    restart: always
     ports:
       - 3000:3000
     volumes:
@@ -58,7 +58,7 @@ services:
   # testapp:
   #   container_name: testapp
   #   image: ${REPO}/radshift-testapp:${TAG}
-  #   restart: on-failure
+  #   restart: always
   #   environment:
   #     - PORT=3210
   #   ports:
@@ -79,7 +79,7 @@ services:
   streamnomorefam:
     container_name: streamnomorefam
     image: ${REPO}/radshift-stream-downloader:${TAG}
-    restart: on-failure
+    restart: always
     environment:
       - PORT=3009
     volumes:
@@ -103,7 +103,7 @@ services:
   nextcloud:
     container_name: nextcloud
     image: nextcloud:17
-    restart: on-failure
+    restart: always
     depends_on:
       - nextcloud-db
     environment:
@@ -127,7 +127,7 @@ services:
   nextcloud-db:
     container_name: nextcloud-db
     image: postgres:12-alpine
-    restart: on-failure
+    restart: always
     environment:
       - POSTGRES_USER=${NEXTCLOUD_POSTGRES_DB_USER}
       - POSTGRES_PASSWORD=${NEXTCLOUD_POSTGRES_DB_PASSWORD}
@@ -141,7 +141,7 @@ services:
   bitwarden:
     container_name: bitwarden
     image: bitwardenrs/server:raspberry
-    restart: on-failure
+    restart: always
     volumes:
       - "${ROOT_DIR}/var/bitwarden:/data"
     networks:
