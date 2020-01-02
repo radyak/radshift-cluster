@@ -31,8 +31,6 @@ HostbasedAuthentication no
 LoginGraceTime 60
 MaxStartups 2
 AllowTcpForwarding no
-X11Forwarding no
-PermitEmptyPasswords no
 
 #AddressFamily any
 #ListenAddress 0.0.0.0
