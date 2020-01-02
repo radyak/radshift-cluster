@@ -94,12 +94,13 @@ services:
 
   streamnomorefam:
     container_name: streamnomorefam
-    image: ${REPO}/radshift-stream-downloader:${TAG}
+    image: radshift-stream-downloader:${TAG}
     restart: always
     environment:
       - PORT=3009
     volumes:
-      - "${ROOT_DIR}/home:/usr/src/app/output"
+      # - "${ROOT_DIR}/home:/usr/src/app/output"
+      - "${ROOT_DIR}/var/nextcloud/data:/usr/src/app/output"
     ports:
       - 3009:3009
     networks:
