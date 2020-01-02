@@ -9,10 +9,16 @@
 export LS_OPTIONS='--color=auto'
 eval "`dircolors`"
 alias ls='ls $LS_OPTIONS'
-alias ll='ls $LS_OPTIONS -l'
-alias l='ls $LS_OPTIONS -lA'
+alias ll='ls $LS_OPTIONS -lah'
+alias l='ls $LS_OPTIONS -lAh'
 
 # Some more alias to avoid making mistakes:
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+
+alias @rs='cd /var/rs-root '
+alias drs='docker-compose -f /var/rs-root/docker-compose.yml '
+
+alias ..='cd ..'
+alias ...='cd ../..'
