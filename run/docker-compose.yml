@@ -75,7 +75,23 @@ services:
   #     - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
   #     - "traefik.frontend.auth.forward.trustForwardHeader=true"
   #     - "traefik.port=3210"
-    
+  
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    restart: always
+    # environment:
+    #   - VIRTUAL_HOST=dev.portainer
+    ports:
+      - 9000:9000
+      - 8000:8000
+    networks:
+      - internal
+      - www
+      - dev
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   streamnomorefam:
     container_name: streamnomorefam
     image: ${REPO}/radshift-stream-downloader:${TAG}
