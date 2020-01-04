@@ -32,7 +32,6 @@ build.prepare:
 	mkdir -p .tmp/etc/gateway
 	mkdir -p .tmp/etc/core
 	mkdir -p .tmp/var
-	mkdir -p .tmp/home/shared
 
 build.dev: build.prepare
 	cp ./dev/*.toml .tmp/etc/gateway

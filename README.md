@@ -33,15 +33,6 @@ The following subdirectories are specified relative to the base directory for th
 | `/var/<backend name>` | App data of the corresponding backend |
 
 
-#### `/home`: User data
-
-| Dir | Explanation |
-|--|--|
-| **`/home`**: | |
-| `/home/<user name>` | Data of the corresponding user |
-| `/home/shared` | Shared data for all users |
-
-
 ### Minimal file structure example:
 
 ```
@@ -49,5 +40,4 @@ The following subdirectories are specified relative to the base directory for th
     |
     + /etc/core
     + /var/core
-    + /home/shared
 ```
