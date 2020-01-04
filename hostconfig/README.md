@@ -70,6 +70,15 @@ see also:
    1. Copy TAR to host: `scp -P 2294 backup.tar pirate@black-pearl:backup.tar`
 
 
+## Set up for apps:
+
+1. Add cronjob for updating nextcloud files:
+   1. `crontab -e`
+   2. Add the lines
+      * `*/5 * * * * docker exec -u www-data nextcloud /var/www/html/occ files:scan --all > /home/pirate/nextcloud-cronjob.log`
+      * `*/5 * * * * sudo chown -R www-data /var/rs-root/var/nextcloud/data >> /home/pirate/nextcloud-cronjob.log`
+
+
 ## Set up RAID-1
 
 See also [Build a Raspberry Pi RAID NAS Server – Complete DIY Guide](https://www.ricmedia.com/build-raspberry-pi3-raid-nas-server/)
