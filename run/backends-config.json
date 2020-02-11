@@ -4,7 +4,7 @@
         "description": "Some sample app",
         "host": "testapp",
         "port": 3210,
-        "image": "rpi-workstation:5000/radshift-testapp:latest",
+        "image": "radyak/radshift-testapp:latest",
         "entry": "",
         "security": {
             "rules": [
@@ -38,7 +38,7 @@
         "host": "streamnomorefam",
         "name": "streamnomorefam",
         "port": 3009,
-        "image": "rpi-workstation:5000/radshift-stream-downloader:latest",
+        "image": "radyak/radshift-stream-downloader:latest",
         "entry": "",
         "security": {
             "rules": [
