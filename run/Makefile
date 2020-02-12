@@ -38,6 +38,7 @@ build.dev: build.prepare
 	cp backends-config.json .tmp/etc/core
 	cp .env .tmp
 	cp docker-compose.yml .tmp
+	cp backup.sh .tmp
 
 
 build.rpi: build.prepare
@@ -45,6 +46,7 @@ build.rpi: build.prepare
 	cp backends-config.json .tmp/etc/core
 	cp ./rpi/.env .tmp
 	cp docker-compose.yml .tmp
+	cp backup.sh .tmp
 
 	cd .tmp && tar -cpf package.tar .
 
@@ -58,3 +60,4 @@ delpoy.clean:
 deploy.rpi: build.rpi
 	scp -P $(PORT) .tmp/package.tar $(SSH_USER)@$(HOST):.
 	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'tar -pxvf package.tar -C /var/rs-root/'
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'mv /var/rs-root/backup.sh . && chmod +x backup.sh'

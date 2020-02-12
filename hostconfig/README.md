@@ -72,134 +72,61 @@ see also:
 
 ## Set up for apps:
 
-1. Add cronjob for updating nextcloud files:
+1. Set `www-data` as owner of the Nextcloud directory:
+   1. `sudo chown -R www-data /var/rs-root/var/nextcloud`
+2. Add cronjob for updating nextcloud files:
    1. `crontab -e`
-   2. Add the lines
-      * `*/5 * * * * docker exec -u www-data nextcloud /var/www/html/occ files:scan --all > /home/pirate/nextcloud-cronjob.log`
-      * `*/5 * * * * sudo chown -R www-data /var/rs-root/var/nextcloud/data >> /home/pirate/nextcloud-cronjob.log`
+   2. Add the line
+      * `*/5 * * * * sudo chown -R www-data /var/rs-root/var/nextcloud/data`
+3. Replace Nextcloud's `config.php` with the provided `config.php`, containing the following additional line:
+    ```php
+      'filesystem_check_changes' => 0,
+    ```
 
 
-## Set up RAID-1
+## External USB drive as main data volume
 
-See also [Build a Raspberry Pi RAID NAS Server – Complete DIY Guide](https://www.ricmedia.com/build-raspberry-pi3-raid-nas-server/)
-
-1. Install `mdadm`:
-  ```bash
-  sudo apt-get update
-  sudo apt-get upgrade -y
-  sudo apt-get install mdadm -y
-  ```
-  (May require an intermediate reboot)
-2. Find the USB drives: `sudo blkid`
-  E.g.:
-  ```bash
-    ...
-    /dev/sda1: LABEL="SanDisk-SSD" UUID="B04C5F094C5EC9AC" TYPE="ntfs" PARTUUID="01a915d1-01"
-    /dev/sdb1: LABEL="SanDisk-USB" UUID="843679B23679A5B8" TYPE="ntfs" PARTUUID="f0cb91ee-01"
-    ...
-  ```
-  &rarr; Drives are `/dev/sda1` and `/dev/sdb1`
-3. Set up the two drives for RAID-1: `sudo mdadm --create --verbose /dev/md0 --level=mirror --raid-devices=2 /dev/sda1 /dev/sdb1`
-4. Confirm the setup: `cat /proc/mdstat` - Displays the current sync status
-5. Save the RAID array:
-  ```bash
-  sudo -i
-  mdadm --detail --scan >> /etc/mdadm/mdadm.conf
-6. Format the RAID drive with ext4: `sudo mkfs.ext4 -v -m .1 -b 4096 -E stride=32,stripe-width=64 /dev/md0`
-7. Mount the drive to the `RS_ROOT` directory:
-  ```bash
-  mkdir /var/rs-root
-  sudo mount /dev/md0 /var/rs-root
-  ```
-8. Auto-mount the RAID drive:
-   1. Find the UUID with `sudo blkid` 
-   2. Edit `fstab`: `sudo nano /etc/fstab` and add the line, e.g.:
-      `UUDI=4e118f22-b08d-4949-91e4-2d02f9343641 /var/rs-root ext4 defaults 0 0`
-9. Set the owner of the new directory to `pirate`: `sudo chown -R pirate:pirate /var/rs-root`
-
-## Development
-
-To pull images from the dev registry, edit `/etc/docker/daemon.json` and add it to the `insecure-registries` entry:
-```json
-{
-  "insecure-registries" : ["rpi-workstation:5000"]
-}
-```
+1. Find the USB drive: `sudo blkid`, e.g.:
+   `/dev/sda: LABEL="sundisk-256gb" UUID="f67c21d6-bf43-4663-9b48-52deb77ad77e" TYPE="ext4"`
+2. Empty the target directory: `/var/rs-root/`
+3. Mount: `sudo mount /dev/sda /var/rs-root`
+4. Edit `fstab`: `sudo nano /etc/fstab` and add the line, e.g.:
+      `UUDI=f67c21d6-bf43-4663-9b48-52deb77ad77e /var/rs-root ext4 defaults,nofail 0 0`
+      *ATTENTION:* In many cases, the PI will not boot without the option `nofail` (or `noauto`)
+5. Set the owner of the new directory to `pirate`: `sudo chown -R pirate:pirate /var/rs-root`
 
 
-<!--
-## External drives (USB port)
 
-Subject is to use a USB drive with NTFS file system (because it's usable both under Windows and Linux) on the Hypriot Raspberry Pi and make its content accessable to Docker containers.
+## Backup on a second USB drive
 
-See also:
-* https://jankarres.de/2013/01/raspberry-pi-usb-stick-und-usb-festplatte-einbinden/ [German]
-* https://gist.github.com/etes/aa76a6e9c80579872e5f [English]
+Pre-steps:
+1. Install `sudo apt-get install rsync ntfs-3g`
+2. Format USB drive: `sudo fdisk /dev/sda`
+   1. Delete: `d`
+   2. Commit/write: `w`
+3. Format USB drive: `sudo mkfs.ext4 -L 'PNY-32GB' /dev/sda`
 
+Steps:
 
-### Prequel 1: Format test USB drive
+1. Find drive: `lsblk`, look for the label
+2. Create mount dir: `sudo mkdir /mnt/backup-usb-drive`
+3. Mount: `sudo mount /dev/sdd /mnt/backup-usb-drive`
+4. Stop all containers: `cd /var/rs-root && docker-compose stop`
+5. Also dot files: `shopt -s dotglob`
+6. Copy: `sudo rsync -avhAP -delete /var/rs-root /mnt/backup-usb-drive`
+   1. Nextcloud recommendation: `rsync -avxA nextcloud/ nextcloud`
+   2. `sudo rsync -rPz /var/rs-root /mnt/backup-usb-drive`
+   
+   - a: archivieren; kombiniert -rlptgoD
+   - v: verbos
+   - h: output numbers in a human-readable format
+   - A: preserve ACLs (implies --perms)
+   - x: one filesystem; don't cross filesystem boundaries
+   - r: Verzeichnisse rekursiv kopieren
+   - P: Progress bar anzeigen
+   - z: Daten während Übertragung komprimieren
 
-Find drive:
-
-```bash
-df -h
-/dev/sda1       [...]   /media/fvo/SONY USB
-```
-
-Format with NTFS (so that it can be used easily under windows, too):
-
-```bash
-sudo umount /dev/sda1
-sudo mkfs.ntfs -f -L 'myTestDrive' /dev/sda1
-#   -L:     Label
-#   -f/-Q:  Quick format
-#sudo mkfs.ext4 /dev/sda1 for ext4
-sudo umount /dev/sda1
-```
-
-
-### Prequel 2: Prepare Raspberry
-
-1. Install filesystem dependencies:
-  ```
-  sudo apt-get update
-  sudo apt-get -y install ntfs-3g hfsutils hfsprogs exfat-fuse
-  ```
-
-2. Create mount directory:
-  `sudo mkdir /media/usbdrives/default`
-
-
-### Mount USB drives to Raspberry (manually):
-
-1. List USB devices:
-  `sudo blkid -o list -w /dev/null`
-  > `/dev/sdb1    ntfs   myTestDrive   77884C3708BDF919`
-
-2. Manually mount USB device:
- `sudo mount -t ntfs-3g -o utf8,uid=pirate,gid=pirate,noatime /dev/sdb1 /media/usbdrives/default`
- (`sudo mount -t ext4 -o defaults /dev/sdb1 /media/usbdrives/default` for ext4)
-
-3. Manually unmount/eject USB device:
- `sudo umount /media/usbdrives/default`
-
-
-### Mount USB drives to Raspberry (automatically):
-
-Edit the file `/etc/fstab`:
-`sudo nano -w /etc/fstab`
-`UUID=77884C3708BDF919 /media/usbdrives/default ntfs-3g utf8,uid=pirate,gid=pirate,noatime 0`
-Reboot
-
-
-### Notes:
-
-1. Mounting the `/media/usbdrives/default` directory makes the drive available for Docker containers (or all drives mounted under this directory by mounting `/media/usbdrives`)
-
-2. TODO for automation (preferrably from inside a Docker container, if possible)
-   1. Format & name USB drives
-   2. Perform the steps above automatically
-   3. Duplicate contents of on drive to another for backups (Suggestion: one master USB port, others are slave ports)
-   4. Retrieve stats from drives
-
--->
+7. Set up cronjob:
+   1. `crontab -e`
+   2. Add the line
+      * `0 3 * * * /home/pirate/backup.sh > backup.log 2>&1`

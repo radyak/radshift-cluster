@@ -2,6 +2,7 @@ version: '3.5'
 
 services:
 
+
   gateway:
     image: traefik:1.7
     container_name: gateway
@@ -21,6 +22,7 @@ services:
     networks:
       - ${INTERNAL_NETWORK:-internal}
       - www
+
 
   core:
     container_name: core
@@ -55,26 +57,6 @@ services:
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=3000"
 
-  # testapp:
-  #   container_name: testapp
-  #   image: ${REPO}/radshift-testapp:${TAG}
-  #   restart: always
-  #   environment:
-  #     - PORT=3210
-  #   ports:
-  #     - 3210:3210
-  #   networks:
-  #     - ${INTERNAL_NETWORK:-internal}
-  #   labels:
-  #     - "traefik.backend=testapp"
-  #     - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
-  #     - "traefik.enable=true"
-  #     - "traefik.frontend.rule=Host:testapp.${DOMAIN}"
-  #     - "traefik.frontend.entryPoints=http,https"
-  #     - "traefik.frontend.auth.forward.address=http://core:3000/api/auth/authenticate"
-  #     - "traefik.frontend.auth.forward.authResponseHeaders=X-User,X-Roles"
-  #     - "traefik.frontend.auth.forward.trustForwardHeader=true"
-  #     - "traefik.port=3210"
   
   portainer:
     image: portainer/portainer
@@ -92,9 +74,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+
   streamnomorefam:
     container_name: streamnomorefam
-    image: radshift-stream-downloader:${TAG}
+    image: ${REPO}/radshift-stream-downloader:${TAG}
     restart: always
     environment:
       - PORT=3009
@@ -117,6 +100,7 @@ services:
       - "traefik.frontend.auth.forward.trustForwardHeader=true"
       - "traefik.port=3009"
       
+
   nextcloud:
     container_name: nextcloud
     image: nextcloud:17
@@ -141,6 +125,7 @@ services:
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=80"
   
+
   nextcloud-db:
     container_name: nextcloud-db
     image: postgres:12-alpine
@@ -155,6 +140,7 @@ services:
     networks:
       - ${INTERNAL_NETWORK:-internal}
 
+      
   bitwarden:
     container_name: bitwarden
     image: bitwardenrs/server:raspberry
