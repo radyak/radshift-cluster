@@ -30,12 +30,14 @@ services:
     restart: always
     ports:
       - 3000:3000
+    privileged: true
     volumes:
       - "${ROOT_DIR}/etc/core:/usr/src/conf"
       - "${ROOT_DIR}/var/core:/var/core"
       - "${ROOT_DIR}/var/shared:/var/shared"
       - "${ROOT_DIR}/home:/home"
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/home/pirate:/backup"
     environment:
       - "PORT=3000"
       - "CONF_DIR=/usr/src/conf"
@@ -46,7 +48,6 @@ services:
       - "DYN_DNS_PROVIDER_PASSWORD=${DYN_DNS_PROVIDER_PASSWORD}"
       - "DYN_DNS_UPDATE_INTERVAL_MINUTES=${DYN_DNS_UPDATE_INTERVAL_MINUTES}"
       - "LOG_LEVEL=${LOG_LEVEL}"
-      - "BACKUP_METAINFO_PATH=${BACKUP_METAINFO_PATH}"
     networks:
       - www
       - ${INTERNAL_NETWORK:-internal}

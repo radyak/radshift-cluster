@@ -18,12 +18,12 @@ echo ""
 
     echo ""
     echo "Result: SUCCESS"
-    echo "{\"status\":\"SUCCESS\",\"date\":\"$TIME\"}" > ./backup.status
+    echo "{\"status\":\"SUCCESS\",\"date\":\"$TIME\"}" > /home/pirate/backup.status
 
 } || {
     cd /var/rs-root && docker-compose start
     echo "Result: ERROR"
-    echo "{\"status\":\"ERROR\",\"date\":\"$TIME\"}" > ./backup.status
+    echo "{\"status\":\"ERROR\",\"date\":\"$TIME\"}" > /home/pirate/backup.status
 }
 
 
