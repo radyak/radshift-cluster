@@ -18,6 +18,7 @@ echo ""
 
     echo ""
     echo "Result: SUCCESS"
+    echo "{\"status\":\"SUCCESS\",\"date\":\"$TIME\"}" > ./backup.status
 
 } || {
     cd /var/rs-root && docker-compose start
@@ -28,5 +29,4 @@ echo ""
 
 echo ""
 TIME=$(date '+%d-%m-%y %H:%M:%S');
-echo "{\"status\":\"SUCCESS\",\"date\":\"$TIME\"}" > ./backup.status
 echo "Backup finished at $TIME"
