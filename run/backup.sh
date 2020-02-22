@@ -5,7 +5,7 @@ echo "Starting backup at $TIME"
 echo ""
 
 {
-    cd /var/rs-root && docker-compose stop
+    cd /var/rs-root && /usr/local/bin/docker-compose stop
 
     sudo mkdir -p /mnt/backup-usb-drive
     sudo mount /dev/sdb /mnt/backup-usb-drive
@@ -14,14 +14,14 @@ echo ""
     sudo rsync -avhAP -delete /var/rs-root/ /mnt/backup-usb-drive
     sudo umount /dev/sdb
 
-    cd /var/rs-root && docker-compose start
+    cd /var/rs-root && /usr/local/bin/docker-compose start
 
     echo ""
     echo "Result: SUCCESS"
     echo "{\"status\":\"SUCCESS\",\"date\":\"$TIME\"}" > /home/pirate/backup.status
 
 } || {
-    cd /var/rs-root && docker-compose start
+    cd /var/rs-root && /usr/local/bin/docker-compose start
     echo "Result: ERROR"
     echo "{\"status\":\"ERROR\",\"date\":\"$TIME\"}" > /home/pirate/backup.status
 }
