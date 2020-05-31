@@ -23,10 +23,10 @@ stop.cluster:
 
 
 ## build
-# TODO: parameterize the build dir (e.g. DIR=rpi)
+# TODO: parameterize the build dir (e.g. DIR=host)
 
 build.prepare:
-	git pull
+	#git pull
 	sudo rm -rf .tmp
 	mkdir .tmp
 	mkdir -p .tmp/etc/gateway
@@ -41,10 +41,10 @@ build.dev: build.prepare
 	cp backup.sh .tmp
 
 
-build.rpi: build.prepare
-	cp ./rpi/*.toml .tmp/etc/gateway
+build: build.prepare
+	cp ./host/*.toml .tmp/etc/gateway
 	cp backends-config.json .tmp/etc/core
-	cp ./rpi/.env .tmp
+	cp ./host/.env .tmp
 	cp docker-compose.yml .tmp
 	cp backup.sh .tmp
 
@@ -57,7 +57,7 @@ build.rpi: build.prepare
 delpoy.clean: 
 	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'rm -rf /var/rs-root/etc'
 
-deploy.rpi: build.rpi
+deploy: build
 	scp -P $(PORT) .tmp/package.tar $(SSH_USER)@$(HOST):.
-	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'tar -pxvf package.tar -C /var/rs-root/'
-	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'mv /var/rs-root/backup.sh . && chmod +x backup.sh'
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'sudo tar -pxvf package.tar -C /var/rs-root/'
+	ssh $(SSH_USER)@$(HOST) -p $(PORT) 'sudo mv /var/rs-root/backup.sh . && sudo chmod +x backup.sh'
