@@ -175,6 +175,31 @@ services:
     ports:
       - 445:445
       - 139:139
+  
+  airsonic:
+    container_name: airsonic
+    image: linuxserver/airsonic
+    restart: always
+    volumes:
+      - "${ROOT_DIR}/var/nextcloud/data/birdman/files:/music"
+      - "${ROOT_DIR}/var/airsonic/config:/config"
+      - "${ROOT_DIR}/var/airsonic/playlists:/playlists"
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    ports:
+    - 4040:4040
+    labels:
+      - "traefik.backend=airsonic"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:airsonic.${DOMAIN}"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.port=4040"
+
 
 
 networks:
