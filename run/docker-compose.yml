@@ -171,10 +171,16 @@ services:
       - ${INTERNAL_NETWORK:-internal}
       - www
     # One-line (!) command required if multiple shares required; see https://github.com/dperson/samba/wiki/Using-Docker-Compose
-    command: '-u "${SAMBA_USER1};${SAMBA_PASSWORD1}" -s "${SAMBA_USER1};/${SAMBA_USER1};yes;no;no;${SAMBA_USER1}" -u "${SAMBA_USER2};${SAMBA_PASSWORD2}" -s "${SAMBA_USER2};/${SAMBA_USER2};yes;no;no;${SAMBA_USER2}"'
+    command: '-u "${SAMBA_USER1};${SAMBA_PASSWORD1}" -s "${SAMBA_USER1};/${SAMBA_USER1};yes;no;no;${SAMBA_USER1};;;" -u "${SAMBA_USER2};${SAMBA_PASSWORD2}" -s "${SAMBA_USER2};/${SAMBA_USER2};yes;no;no;${SAMBA_USER2};;;"'
     ports:
       - 445:445
       - 139:139
+    environment:
+      - USERID=${WWW_DATA_USER_ID:-33}
+      - GROUPID=${WWW_DATA_GROUP_ID:-33}
+      - PERMISSIONS=true
+      - TZ='Europe/Berlin'
+      - SMB=true
   
   airsonic:
     container_name: airsonic
@@ -199,6 +205,26 @@ services:
       - "traefik.frontend.rule=Host:airsonic.${DOMAIN}"
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=4040"
+
+  shnippit:
+    container_name: shnippit
+    image: ${REPO}/shnippit
+    restart: always
+    volumes:
+      - "${ROOT_DIR}/var/shnippit/data:/data"
+    environment:
+      - ATTACHMENTS_STORAGE_PATH=/data/attachments
+    networks:
+      - ${INTERNAL_NETWORK:-internal}
+    ports:
+    - 8080:8080
+    labels:
+      - "traefik.backend=shnippit"
+      - "traefik.docker.network=${INTERNAL_NETWORK:-internal}"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:shnippit.${DOMAIN}"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.port=8080"
 
 
 
