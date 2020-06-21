@@ -81,6 +81,7 @@ services:
     container_name: streamnomorefam
     image: ${REPO}/radshift-stream-downloader
     restart: always
+    user: ${WWW_DATA_USER_ID:-33}
     environment:
       - PORT=3009
     volumes:
@@ -182,6 +183,7 @@ services:
       - TZ='Europe/Berlin'
       - SMB=true
   
+
   airsonic:
     container_name: airsonic
     image: linuxserver/airsonic
@@ -205,6 +207,7 @@ services:
       - "traefik.frontend.rule=Host:airsonic.${DOMAIN}"
       - "traefik.frontend.entryPoints=http,https"
       - "traefik.port=4040"
+
 
   shnippit:
     container_name: shnippit
