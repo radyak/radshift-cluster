@@ -80,22 +80,19 @@ Usually, no additional dump and/or import should be required, as the Postgres da
   * Import from the mounted volume: `psql -U {db user name} nextcloud < /var/lib/postgresql/data/dump.sql`
 
 
-<!--
 ### Set up for apps
 
-1. Set `www-data` as owner of the Nextcloud directory:
+1. Optional: set `www-data` as owner of the Nextcloud directory:
    1. `sudo chown -R www-data /var/rs-root/var/nextcloud`
-2. Add cronjob for updating nextcloud files:
-   1. `crontab -e`
-   2. Add the line
-      * `*/5 * * * * sudo chown -R www-data /var/rs-root/var/nextcloud/data`
-3. Replace Nextcloud's `config.php` with the provided `config.php`, containing the following additional line:
+3. Register files not added by nextcloud (e.g. with streamnomorefam): Replace Nextcloud's `config.php` with the provided `config.php`, containing the following additional line:
     ```php
       'filesystem_check_changes' => 0,
     ```
 
 
-## Backup (on USB drive)
+## Automatic backups
 
-
--->
+1. Set up cronjob (e.g. every 2 weeks, at 1st and 16th of each month at 03:00):
+   1. `crontab -e`
+   2. Add the line
+      * `0 2 1,16 * * /var/rs-root/backup.sh > backup.log 2>&1`
