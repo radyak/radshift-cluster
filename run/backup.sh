@@ -14,18 +14,24 @@ BACKUP_DRIVE_MOUNT_POINT="${BACKUP_DRIVE_MOUNT_POINT:-/mnt/backup-drive}"
 
 echo "Mounting $BACKUP_DRIVE to $BACKUP_DRIVE_MOUNT_POINT"
 
-exit 0
+# Mount USB drive
+umount $BACKUP_DRIVE
+rm -rf $BACKUP_DRIVE_MOUNT_POINT
+mkdir -p $BACKUP_DRIVE_MOUNT_POINT
+chown $MAIN_USER $BACKUP_DRIVE_MOUNT_POINT
+mount $BACKUP_DRIVE $BACKUP_DRIVE_MOUNT_POINT
+mount_succeeded=$(echo $?)
+  
+if [ "$mount_succeeded" -eq "0" ]; then
+  echo "Mounted $BACKUP_DRIVE to $BACKUP_DRIVE_MOUNT_POINT"
+else
+  echo "Failed to mount $BACKUP_DRIVE to $BACKUP_DRIVE_MOUNT_POINT"
+  exit -1
+fi
 
 {
     # Stop containers
     cd /var/rs-root && /usr/local/bin/docker-compose stop
-
-    # Mount USB drive
-    umount $BACKUP_DRIVE
-    mkdir -p $BACKUP_DRIVE_MOUNT_POINT
-    chown $MAIN_USER $BACKUP_DRIVE_MOUNT_POINT
-    mount $BACKUP_DRIVE $BACKUP_DRIVE_MOUNT_POINT
-    echo "Mounted $BACKUP_DRIVE to $BACKUP_DRIVE_MOUNT_POINT"
 
     # Sync data
     shopt -s dotglob
