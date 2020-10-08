@@ -95,4 +95,4 @@ Usually, no additional dump and/or import should be required, as the Postgres da
 1. Set up cronjob (e.g. every 2 weeks, at 1st and 16th of each month at 03:00):
    1. `crontab -e`
    2. Add the line
-      * `0 2 1,16 * * /var/rs-root/backup.sh > backup.log 2>&1`
+      * `0 3 * * * /var/rs-root/backup.sh > backup.log 2>&1`
