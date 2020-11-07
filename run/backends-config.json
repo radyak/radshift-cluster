@@ -43,6 +43,10 @@
         "security": {
             "rules": [
                 {
+                    "resourceMatcher": "\/api\/status.*",
+                    "authenticated": false
+                },
+                {
                     "resourceMatcher": "\/api\/",
                     "authenticated": true
                 }
