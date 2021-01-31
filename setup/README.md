@@ -90,9 +90,14 @@ Usually, no additional dump and/or import should be required, as the Postgres da
     ```
 
 
-## Automatic backups
+## Backups
 
-1. Set up cronjob (e.g. every 2 weeks, at 1st and 16th of each month at 03:00):
-   1. `crontab -e`
-   2. Add the line
-      * `0 3 * * * /var/rs-root/backup.sh > backup.log 2>&1`
+Use the `backup.sh` script, e.g.:
+`/var/rs-root/backup.sh > backup.log 2>&1`
+Optionally, make sure the USB drive is plugged into `/dev/sdc1` (required by the script by default) with the `lsblk` command
+
+
+For automatic backups, set up a cronjob (e.g. every 2 weeks, at 1st and 16th of each month at 03:00):
+1. `crontab -e`
+2. Add the line
+   * `0 3 * * * /var/rs-root/backup.sh > backup.log 2>&1`
